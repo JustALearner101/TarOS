@@ -178,6 +178,31 @@ impl Writer {
             }
         }
     }
+
+    // Membersihkan seluruh layar VGA dengann karakter spasi kosong.
+    // Membersihkan seluruh layar VGA dengan karakter spasi kosong.
+    // Setelah dibersihkan, teks berikutnya mulai dicetak dari kolom 0 pada
+    // baris terbawah (baris 24), karena Writer selalu menulis ke baris terakhir.
+    pub fn clear_screen(&mut self) {
+        let blank = ScreenChar{
+            ascii_character: b' ',
+            color_code: self.color_code,
+        };
+
+        // Perulangan untuk setiap piksel karakter
+        for row in 0..BUFFER_HEIGHT{
+            for col in 0..BUFFER_WIDTH{
+                self.buffer.chars[row][col].write(blank);
+            }
+        }
+
+        self.column_position = 0;
+    }
+
+     /// Mengubah kombinasi warna teks (foreground) dan latar belakang (background)
+     pub fn set_color(&mut self, foreground: Color, background: Color) {
+        self.color_code = ColorCode::new(foreground, background);
+     }
 }
 
 #[allow(dead_code)]

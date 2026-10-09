@@ -16,6 +16,9 @@ fn panic(_info: &PanicInfo) -> ! {
 
 #[unsafe(no_mangle)]
 pub extern "C" fn _start() -> ! {
+    // 1. Bersihkan layar bawaan BIOS/Bootloader saat OS pertama kali menyala
+    vga_buffer::WRITER.lock().clear_screen();
+
     // ASCII art dipotong jadi 23 baris biar muat di VGA 80x25
     // Max lebar: 67 kolom (aman di 80 kolom)
     let arch_logo = r#"
@@ -44,8 +47,15 @@ pub extern "C" fn _start() -> ! {
  ,==)ii=;:,,,,:::=ii)i)iIIIITIIITIIII))i+:'
 "#;
 
+    // 2. Ubah warna menjadi Cyan untuk mencetak logo Arch Linux
+    vga_buffer::WRITER.lock().set_color(vga_buffer::Color::Cyan, vga_buffer::Color::Black);
     println!("{}", arch_logo);
+
+    // 3. Ubah warna menjadi Hijau Terang untuk teks sambutan sukses
+    vga_buffer::WRITER.lock().set_color(vga_buffer::Color::LightGreen, vga_buffer::Color::Black);
     println!("Welcome to TarOS - Arch Edition!");
 
+    // 4. Kembalikan ke warna default (Kuning) agar teks berikutnya konsisten
+    vga_buffer::WRITER.lock().set_color(vga_buffer::Color::Yellow, vga_buffer::Color::Black);
     loop {}
 }
