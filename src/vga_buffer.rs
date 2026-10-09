@@ -178,6 +178,30 @@ impl Writer {
             }
         }
     }
+
+    // Membersihkan seluruh layar VGA dengann karakter spasi kosong.
+    // mengembalikan posisi kursor ke ujung kiri atas (baris 0, kolom 0).
+
+    pub fn clear_screen(&mut self) {
+        let blank = ScreenChar{
+            ascii_character: b' ',
+            color_code: self.color_code,
+        };
+
+        // Perulangan untuk setiap piksel karakter
+        for row in 0..BUFFER_HEIGHT{
+            for col in 0..BUFFER_WIDTH{
+                self.buffer.chars[row][col].write(blank);
+            }
+        }
+
+        self.column_position = 0;
+    }
+
+     /// Mengubah kombinasi warna teks (foreground) dan latar belakang (background)
+     pub fn set_color(&mut self, foreground: Color, background: Color) {
+        self.color_code = ColorCode::new(foreground, background);
+     }
 }
 
 #[allow(dead_code)]
