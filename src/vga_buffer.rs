@@ -180,8 +180,9 @@ impl Writer {
     }
 
     // Membersihkan seluruh layar VGA dengann karakter spasi kosong.
-    // mengembalikan posisi kursor ke ujung kiri atas (baris 0, kolom 0).
-
+    // Membersihkan seluruh layar VGA dengan karakter spasi kosong.
+    // Setelah dibersihkan, teks berikutnya mulai dicetak dari kolom 0 pada
+    // baris terbawah (baris 24), karena Writer selalu menulis ke baris terakhir.
     pub fn clear_screen(&mut self) {
         let blank = ScreenChar{
             ascii_character: b' ',
