@@ -1,19 +1,13 @@
 #![no_std]
 #![no_main]
+#![feature(custom_test_frameworks)]
+#![test_runner(taros::test_runner)]
+#![reexport_test_harness_main = "test_main"]
 
-mod vga_buffer;
-
-// Use "cargo run --target x86_64-taros.json" to run
 use core::panic::PanicInfo;
+use taros::{println, vga_buffer};
 
-
-
-/// This function is called on panic.
-#[panic_handler]
-fn panic(_info: &PanicInfo) -> ! {
-    loop {}
-}
-
+/// Entry point untuk kernel tarOS saat booting
 #[unsafe(no_mangle)]
 pub extern "C" fn _start() -> ! {
     // 1. Bersihkan layar bawaan BIOS/Bootloader saat OS pertama kali menyala
@@ -57,5 +51,29 @@ pub extern "C" fn _start() -> ! {
 
     // 4. Kembalikan ke warna default (Kuning) agar teks berikutnya konsisten
     vga_buffer::WRITER.lock().set_color(vga_buffer::Color::Yellow, vga_buffer::Color::Black);
+
+    #[cfg(test)]
+    test_main();
+
     loop {}
+}
+
+/// This function is called on panic when not testing.
+#[cfg(not(test))]
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
+    println!("{}", info);
+    loop {}
+}
+
+/// This function is called on panic in test mode.
+#[cfg(test)]
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
+    taros::test_panic_handler(info)
+}
+
+#[test_case]
+fn trivial_assertion() {
+    assert_eq!(1, 1);
 }
