@@ -52,9 +52,15 @@ pub extern "C" fn _start() -> ! {
     // 4. Kembalikan ke warna default (Kuning) agar teks berikutnya konsisten
     vga_buffer::WRITER.lock().set_color(vga_buffer::Color::Yellow, vga_buffer::Color::Black);
 
+    taros::init();
+
+    // invoke a breakpoint exception
+    // x86_64::instructions::interrupts::int3();
+
     #[cfg(test)]
     test_main();
 
+    println!("It did not crash!");
     loop {}
 }
 
