@@ -46,7 +46,7 @@ pub enum Color { //List warna
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(transparent)] //Karena dia dipaksa jadi u8, transparent fungsinya biar rust gak nambahin padding atau apapun, dia ttp 1 byte (u8)
-struct ColorCode(u8);
+pub struct ColorCode(u8);
 
 /*
 ColorCode adalah struct yang menyimpan informasi warna foreground dan background.
@@ -66,13 +66,13 @@ impl ColorCode {
 ScreenChar adalah struct yang menyimpan informasi ASCII character dan warna foreground dan background.
 nantinya mereka akan di "press" menjadi satu
 */
-struct ScreenChar {
-    ascii_character: u8,
-    color_code: ColorCode,
+pub struct ScreenChar {
+    pub ascii_character: u8,
+    pub color_code: ColorCode,
 }
 
-const BUFFER_HEIGHT: usize = 25;
-const BUFFER_WIDTH: usize = 80;
+pub const BUFFER_HEIGHT: usize = 25;
+pub const BUFFER_WIDTH: usize = 80;
 
 
 /*
@@ -81,8 +81,8 @@ Buffer terdiri dari 2 dimensi, yaitu 25 baris dan 80 karakter.
 Setiap baris memiliki 80 karakter, dan setiap karakter memiliki informasi warna foreground dan background.
 */
 #[repr(transparent)]
-struct Buffer {
-    chars: [[Volatile<ScreenChar>; BUFFER_WIDTH]; BUFFER_HEIGHT],
+pub struct Buffer {
+    pub chars: [[Volatile<ScreenChar>; BUFFER_WIDTH]; BUFFER_HEIGHT],
     //Volatile berfungsi biar compiler tidak melakukan optimasi/mengubah urutan operasi
 }
 
