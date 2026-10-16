@@ -10,6 +10,7 @@ use taros::{println, vga_buffer};
 /// Entry point untuk kernel tarOS saat booting
 #[unsafe(no_mangle)]
 pub extern "C" fn _start() -> ! {
+  
     // 1. Bersihkan layar bawaan BIOS/Bootloader saat OS pertama kali menyala
     vga_buffer::WRITER.lock().clear_screen();
 
@@ -41,6 +42,7 @@ pub extern "C" fn _start() -> ! {
  ,==)ii=;:,,,,:::=ii)i)iIIIITIIITIIII))i+:'
 "#;
 
+    taros::interrupt::init_idt();
     // 2. Ubah warna menjadi Cyan untuk mencetak logo Arch Linux
     vga_buffer::WRITER.lock().set_color(vga_buffer::Color::Cyan, vga_buffer::Color::Black);
     println!("{}", arch_logo);
@@ -49,9 +51,13 @@ pub extern "C" fn _start() -> ! {
     vga_buffer::WRITER.lock().set_color(vga_buffer::Color::LightGreen, vga_buffer::Color::Black);
     println!("Welcome to TarOS - Arch Edition!");
 
+    x86_64::instructions::interrupts::int3();
+    println!("Sistem berhasil pulih dari Breakpoint!");
+
     // 4. Kembalikan ke warna default (Kuning) agar teks berikutnya konsisten
     vga_buffer::WRITER.lock().set_color(vga_buffer::Color::Yellow, vga_buffer::Color::Black);
 
+    
     #[cfg(test)]
     test_main();
 
