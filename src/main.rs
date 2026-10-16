@@ -42,7 +42,7 @@ pub extern "C" fn _start() -> ! {
  ,==)ii=;:,,,,:::=ii)i)iIIIITIIITIIII))i+:'
 "#;
 
-    taros::interrupt::init_idt();
+    taros::interrupts::init_idt();
     // 2. Ubah warna menjadi Cyan untuk mencetak logo Arch Linux
     vga_buffer::WRITER.lock().set_color(vga_buffer::Color::Cyan, vga_buffer::Color::Black);
     println!("{}", arch_logo);
