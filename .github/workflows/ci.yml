@@ -1,0 +1,39 @@
+name: TarOS Continuous Integration
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    name: Build and Test Kernel
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Install QEMU Emulator
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y qemu-system-x86
+
+    - name: Install Pinned Rust Nightly Toolchain
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: nightly-2024-05-01
+        components: rust-src, llvm-tools-preview
+
+    - name: Install Bootimage Runner Tool
+      run: cargo install bootimage
+
+    - name: Verify Code Syntax (Cargo Check)
+      run: cargo check --target x86_64-taros.json
+
+    - name: Build Kernel Binary
+      run: cargo build --verbose --target x86_64-taros.json
+
+    - name: Run Automated Integration Tests
+      run: cargo test --verbose --target x86_64-taros.json
